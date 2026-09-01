@@ -1,485 +1,223 @@
-# PyGravity — Phase 1: Basic IDE
+# Phase 1 — Project Setup & Basic IDE
 
-## Objective
-
-Build the first working version of PyGravity: a local browser-based code editor that opens a selected project directory and lets the user browse, edit, create, rename, and delete project files.
-
-Phase 1 does **not** include OpenRouter, AI agents, terminal execution, or live preview. The goal is to establish a reliable IDE foundation first.
-
----
-
-## Phase 1 Architecture
-
-```text
-Browser
-   │
-   │ HTTP
-   ▼
-FastAPI Server
-   │
-   ▼
-Workspace Manager
-   │
-   ▼
-Current Project Directory
+## 1. Clone the repository
+```bash
+git clone https://github.com/vyasanbmathew2008/PyGravity.git
+cd PyGravity
 ```
 
----
-
-## Step 1 — Create the Python Backend
-
-Create the basic FastAPI application.
-
-Target structure:
-
-```text
-PyGravity/
-├── backend/
-│   ├── __init__.py
-│   └── main.py
-├── frontend/
-└── requirements.txt
+## 2. Create Python virtual environment
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-Tasks:
+## 3. Create folders
+```bash
+mkdir -p backend
+mkdir -p frontend/css
+mkdir -p frontend/js
+mkdir -p frontend/assets
+mkdir -p tests
+```
 
-- Install FastAPI.
-- Install Uvicorn.
-- Create the FastAPI application.
-- Add a basic health/status endpoint.
-- Serve the frontend from the Python server.
+## 4. Create files
+```bash
+touch backend/__init__.py
+ touch backend/main.py
+ touch frontend/index.html
+ touch frontend/css/style.css
+ touch frontend/js/app.js
+ touch requirements.txt
+ touch .gitignore
+```
 
-Expected result:
+## 5. Install dependencies
+Add to `requirements.txt`:
+
+```text
+fastapi
+uvicorn
+```
+
+Then:
 
 ```bash
-python3 -m backend.main
+pip install -r requirements.txt
 ```
 
-Then open:
+## 6. Create the FastAPI server
+Create the basic server in:
 
 ```text
-http://127.0.0.1:8000
+backend/main.py
 ```
 
----
+The server should:
 
-## Step 2 — Build the Basic Web Interface
+- Start on localhost.
+- Serve the frontend.
+- Use the current working directory as the workspace.
 
-Create the initial IDE layout using normal HTML, CSS, and JavaScript.
-
-Layout:
+## 7. Create the basic IDE UI
+Build the interface in:
 
 ```text
-┌──────────────────────────────────────────────────────────────┐
-│ PyGravity                                      Project       │
-├────────────┬───────────────────────────────────┬─────────────┤
-│ Explorer   │ Editor                            │ AI          │
-│            │                                   │             │
-│ Files      │                                   │ Coming      │
-│            │                                   │ Soon        │
-├────────────┴───────────────────────────────────┴─────────────┤
-│ Status Bar                                                   │
-└──────────────────────────────────────────────────────────────┘
+frontend/index.html
+frontend/css/style.css
+frontend/js/app.js
 ```
 
-Tasks:
+Create:
 
-- Create the main layout.
-- Add Explorer panel.
-- Add Editor panel.
-- Add right-side AI placeholder.
-- Add top toolbar.
-- Add status bar.
-- Make the layout responsive.
-- Use a dark IDE-style theme.
+```text
+Top bar
+Explorer
+Editor
+AI panel placeholder
+Status bar
+```
 
----
-
-## Step 3 — Add the Workspace System
-
-PyGravity must work with the directory from which it is launched.
-
-Example:
+## 8. Add current-directory workspace
+When running:
 
 ```bash
-cd ~/projects/my-website
+cd ~/Projects/myapp
 pygravity
 ```
 
-The workspace becomes:
+The workspace must be:
 
 ```text
-~/projects/my-website/
+~/Projects/myapp
 ```
 
-Tasks:
+Do not copy the project files elsewhere.
 
-- Determine the current working directory.
-- Store it as the active workspace.
-- Do not copy project source files.
-- Reject filesystem paths outside the workspace.
-- Handle symbolic links carefully.
-- Exclude `.git` and `.pygravity` from normal file browsing where appropriate.
+## 9. Create the file explorer backend
+Add APIs for:
 
-Security rule:
-
-```text
-Requested path
-      ↓
-Normalize path
-      ↓
-Check it is inside workspace
-      ↓
-Allow / Reject
-```
-
----
-
-## Step 4 — Build the File Explorer API
-
-Create backend endpoints for browsing the workspace.
-
-Initial API:
-
-```text
-GET /api/workspace
-GET /api/files
-GET /api/file?path=...
-POST /api/file
-POST /api/folder
-PUT /api/file
-PUT /api/rename
-DELETE /api/file
-```
-
-The API should return structured JSON.
-
-Example:
-
-```json
-{
-  "name": "src",
-  "type": "directory",
-  "children": []
-}
-```
-
-Tasks:
-
-- List directories.
 - List files.
+- List folders.
 - Read files.
 - Create files.
 - Create folders.
 - Rename files/folders.
 - Delete files/folders.
-- Validate all paths.
-- Return useful errors.
 
----
+## 10. Connect the Explorer
+Display the workspace files and folders in the browser.
 
-## Step 5 — Connect Explorer to the Frontend
+## 11. Add Monaco Editor
+Integrate Monaco Editor.
 
-The browser Explorer should use the filesystem API.
-
-Tasks:
-
-- Load the workspace tree.
-- Expand/collapse folders.
-- Open files by clicking them.
-- Show file icons based on file type.
-- Add context-menu actions later if needed.
-- Refresh the tree after filesystem changes.
-
-Example:
-
-```text
-📁 my-website
-├── 📁 src
-│   ├── 📄 App.jsx
-│   ├── 📄 main.jsx
-│   └── 📁 components
-├── 📄 index.html
-├── 📄 package.json
-└── 📄 vite.config.js
-```
-
----
-
-## Step 6 — Integrate Monaco Editor
-
-Use Monaco Editor as the main code editor.
-
-Required capabilities:
-
-- Line numbers.
-- Syntax highlighting.
-- Multiple tabs.
-- File switching.
-- Unsaved-change indicator.
-- Basic autocomplete.
-- Keyboard shortcuts.
-- Language detection.
-
-Languages to support first:
+Initially support:
 
 ```text
 HTML
 CSS
 JavaScript
 TypeScript
-JSON
 JSX
 TSX
+JSON
 Python
 Markdown
 ```
 
----
-
-## Step 7 — Open and Edit Files
-
-When a file is selected:
+## 12. Open and edit files
+Clicking a file should:
 
 ```text
-Explorer
-   ↓
-GET /api/file
-   ↓
-Monaco Editor
+Explorer → Backend → File → Monaco Editor
 ```
 
-Tasks:
-
-- Load file content.
-- Detect language.
-- Display content in Monaco.
-- Track modifications.
-- Show unsaved state.
-- Save with Ctrl+S.
-- Save through the backend API.
-
-Expected workflow:
+## 13. Save files
+Implement:
 
 ```text
-Open App.jsx
-      ↓
-Edit code
-      ↓
-Ctrl+S
-      ↓
-PUT /api/file
-      ↓
-Saved to project directory
+Ctrl + S → Backend → Save to project
 ```
 
----
+## 14. Add editor tabs
+Implement:
 
-## Step 8 — File Management UI
+- Open tab.
+- Switch tab.
+- Close tab.
+- Unsaved indicator.
+- Unsaved-change warning.
 
-Add basic project-management actions.
-
-Required actions:
+## 15. Add file operations
+Add UI actions:
 
 ```text
 New File
 New Folder
 Rename
 Delete
-Save
 Refresh
 ```
 
-Example:
+## 16. Add search
+Implement:
+
+- File-name search.
+- File-content search.
+
+## 17. Add filesystem security
+Only allow operations inside the selected workspace.
+
+Block paths that attempt to access files outside the workspace.
+
+## 18. Test
+Test with:
 
 ```text
-Right click src/
-
-+ New File
-+ New Folder
-  Rename
-  Delete
-  Refresh
+HTML/CSS/JS
+React + Vite
+Node.js
+Angular
+TypeScript
 ```
 
-Destructive operations should require confirmation.
+Check:
 
----
+- Start server.
+- Open project.
+- Browse files.
+- Open files.
+- Edit files.
+- Save files.
+- Create files/folders.
+- Rename.
+- Delete.
+- Multiple tabs.
+- Search.
 
-## Step 9 — Editor Tabs
-
-Implement a VS Code-style tab system.
-
-Example:
+## 19. Test in proot-distro
+Run PyGravity inside:
 
 ```text
-┌────────────┬─────────────┬─────────────┐
-│ App.jsx  × │ main.jsx  × │ index.html × │
-└────────────┴─────────────┴─────────────┘
+Termux → proot-distro → Ubuntu
 ```
 
-Tasks:
+Make sure the browser can connect to the local server.
 
-- Open file in a tab.
-- Switch tabs.
-- Close tabs.
-- Preserve unsaved state.
-- Warn before closing an unsaved file.
-- Prevent duplicate tabs for the same file.
-
----
-
-## Step 10 — Search
-
-Add project/file search.
-
-Phase 1 search can include:
-
-- Search filenames.
-- Search file contents.
-- Case-sensitive toggle.
-- Basic result navigation.
-
-Example:
-
-```text
-Search: useState
-
-src/App.jsx:12
-src/components/Form.jsx:8
-src/components/Header.jsx:4
+## 20. Commit Phase 1
+```bash
+git add .
+git commit -m "feat: build phase 1 basic IDE"
+git push
 ```
 
----
-
-## Step 11 — Error Handling
-
-The IDE should not crash because a file operation fails.
-
-Handle:
-
-- File not found.
-- Permission denied.
-- Invalid path.
-- Unsupported/binary file.
-- File changed externally.
-- Failed save.
-- Malformed API request.
-
-Display errors inside the UI rather than only in the server console.
-
----
-
-## Step 12 — Phase 1 Testing
-
-Test the IDE with different project types.
-
-### Static website
-
-```text
-index.html
-style.css
-script.js
-```
-
-### React/Vite
-
-```text
-package.json
-index.html
-src/
-```
-
-### Node.js
-
-```text
-package.json
-server.js
-```
-
-### Angular
-
-```text
-angular.json
-package.json
-src/
-```
-
-### Python
-
-```text
-app.py
-requirements.txt
-```
-
-Test:
-
-- Opening a project.
-- Browsing nested folders.
-- Opening files.
-- Editing files.
-- Saving files.
-- Creating files.
-- Creating folders.
-- Renaming.
-- Deleting.
-- Searching.
-- Opening multiple tabs.
-- Reloading the browser.
-- Handling invalid paths.
-
----
-
-## Phase 1 Completion Criteria
-
-Phase 1 is complete when all of the following work reliably:
-
-- [ ] PyGravity starts from a local project directory.
-- [ ] Browser UI loads successfully.
-- [ ] Workspace is detected automatically.
-- [ ] File explorer displays the project.
-- [ ] Folders can be expanded/collapsed.
-- [ ] Files can be opened.
-- [ ] Monaco Editor works.
-- [ ] HTML/CSS/JS/TS/JSX/TSX/JSON/Python syntax highlighting works.
-- [ ] Files can be edited.
-- [ ] Ctrl+S saves directly to the project.
-- [ ] New files can be created.
-- [ ] New folders can be created.
-- [ ] Files/folders can be renamed.
-- [ ] Files/folders can be deleted with confirmation.
-- [ ] Multiple editor tabs work.
-- [ ] Basic search works.
-- [ ] Workspace path traversal is blocked.
-- [ ] Errors are shown cleanly.
-- [ ] The IDE works inside Termux → proot-distro → Ubuntu.
-
----
-
-## What Comes After Phase 1
-
-Do not implement these during Phase 1:
-
-- OpenRouter
-- AI chat
-- AI agent
-- AI file editing
-- Integrated terminal
-- npm execution
-- Live preview
-- Git UI
-
-They belong to later phases.
-
-The next major phase after the editor foundation is **Phase 2 — Local Filesystem and Workspace API hardening**, followed by the integrated terminal and live preview. OpenRouter should be added after the basic IDE is stable.
-
-## Target Result
-
-At the end of Phase 1:
+## Phase 1 Result
 
 ```bash
-cd ~/projects/my-react-app
+cd ~/Projects/my-react-app
 pygravity
 ```
 
-opens a browser IDE where the user can browse and edit the actual React project directly from the current directory.
+should open a browser-based IDE where the actual project files can be browsed and edited.
+
+Do not add OpenRouter, AI agent, integrated terminal, npm execution, or live preview until Phase 1 is complete.
