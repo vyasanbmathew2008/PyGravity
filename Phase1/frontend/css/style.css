@@ -1,0 +1,122 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background: #1e1e1e;
+  color: #ddd;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: #181818;
+  border-bottom: 1px solid #333;
+}
+
+.brand {
+  font-weight: 700;
+}
+
+.project {
+  margin-left: 24px;
+  color: #999;
+  font-size: 13px;
+}
+
+.workspace {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr 280px;
+}
+
+.explorer,
+.ai-panel {
+  padding: 12px;
+  background: #181818;
+  border-right: 1px solid #333;
+}
+
+.ai-panel {
+  border-right: 0;
+  border-left: 1px solid #333;
+}
+
+h2 {
+  margin: 4px 0 14px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #aaa;
+}
+
+.editor-panel {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  height: 38px;
+  display: flex;
+  background: #181818;
+  border-bottom: 1px solid #333;
+}
+
+.tab {
+  padding: 11px 16px;
+  font-size: 13px;
+}
+
+.tab.active {
+  background: #1e1e1e;
+}
+
+.editor {
+  flex: 1;
+  padding: 32px;
+  overflow: auto;
+}
+
+.editor h1 {
+  font-size: 24px;
+}
+
+.editor p,
+.ai-panel p {
+  color: #999;
+  line-height: 1.6;
+}
+
+.statusbar {
+  height: 24px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+  align-items: center;
+  background: #181818;
+  border-top: 1px solid #333;
+  font-size: 11px;
+  color: #999;
+}
+
+@media (max-width: 900px) {
+  .workspace {
+    grid-template-columns: 200px 1fr;
+  }
+
+  .ai-panel {
+    display: none;
+  }
+}
